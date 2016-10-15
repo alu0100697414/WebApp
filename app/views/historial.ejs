@@ -1,0 +1,45 @@
+<% include _head.ejs %>
+<body ng-controller="HistorialCtrl">
+<% include _navbar.ejs %>
+
+<main><div class="container">
+    <div class="row">
+        <br><br>
+        <h2 class="center indigo-text"> Historial de conexiones </h2>
+        <h6 class="center indigo-text"> (Historial de las conexiones que se han producido en el sistema) </h6>
+    </div>
+
+    <!-- Standard button -->
+    <center><button ng-click="delete()" type="button" class="btn btn-default">ELIMINAR HISTORIAL</button></center>
+
+    <br>
+
+    <div class="row">
+        <div class="col m12 s12">
+            <table class="responsive-table bordered">
+                <thead>
+                <tr>
+                    <th data-field="MAC">MAC</th>
+                    <th data-field="nombre">Nombre</th>
+                    <th data-field="numero">Número de teléfono</th>
+                    <th data-field="Lugar">Lugar</th>
+                    <th data-field="Fecha">Fecha</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="historial in historiales">
+                    <td>{{historial.name}}</td>
+                    <td>{{historial.nombre}}</td>
+                    <td>{{historial.numero}}</td>
+                    <td><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{historial.latitude}}+{{historial.longitude}}" target="_blank">Enlace</a></td>
+                    <td>{{historial.time}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div></main>
+<% include _footer.ejs %>
+</body>
+</html>

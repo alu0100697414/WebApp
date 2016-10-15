@@ -1,0 +1,72 @@
+<% include _head.ejs %>
+<body ng-controller="CamarasCtrl">
+<% include _navbar.ejs %>
+
+<main><div class="container">
+  <div class="row">
+    <br><br>
+    <h2 class="center indigo-text"> Vídeos en streaming </h2>
+    <h6 class="center indigo-text"> (Cada vídeo que se envíe se mostrará automáticamente aquí) </h6>
+    <br>
+  </div>
+
+  <div class="row">
+    <div class="col m4 s4">
+      <div class="collection" ng-repeat="camara in camaras">
+        <a ng-click="scrollTo(camara._id)" href="" class="collection-item">{{camara.name}} &#13; {{camara.time_online}}</a>
+      </div>
+    </div>
+
+    <div class="col m8 s8">
+      <div class="container">
+          <div class="row">
+            <div ng-repeat="camara in camaras" class="repeat-item animated">
+              <link href="lib/videojs/video-js.css" rel="stylesheet">
+              <link href="css/customvideo.css" rel="stylesheet">
+              <!-- If you'd like to support IE8 -->
+              <script src="lib/videojs/videojs-ie8.min.js"></script>
+              <script src="lib/videojs/video.js"></script>
+
+              <div class="card">
+                <div class="card-content">
+                  <div class="row">
+                    <video  ng-attr-id="{{'video-'+camara._id}}" class="video-js vjs-default-skin responsive-video"
+                       autoplay="true" preload="none" width="440" height="464" data-setup='{}'>
+                      <source ng-src="{{camara.server}}" type='rtmp/mp4'>
+                      <p class="vjs-no-js"> To view this video please enable JavaScript </p>
+                    </video>
+                  </div>
+                  <span class="card-title activator grey-text text-darken-4">{{camara.name}}<i class="material-icons right">more_vert</i></span>
+                </div>
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">{{camara.name}}<i class="material-icons right">close</i></span>
+                  <br><span class="indigo-text grey-text text-darken-4">
+                    MAC: {{camara.name}}
+                  </span><br>
+                  <span class="indigo-text grey-text text-darken-4">
+                    Nombre: {{camara.nombre}}
+                  </span><br>
+                  <span class="indigo-text grey-text text-darken-4">
+                    Número: {{camara.number}}
+                  </span><br>
+                  <span class="indigo-text grey-text text-darken-4">
+                    Fecha inicio grabación: {{camara.time_online}}
+                  </span><br>
+                  <span class="indigo-text grey-text text-darken-4">
+                    Lugar: <a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{camara.latitude}}+{{camara.longitude}}" target="_blank">Enlace</a>
+                  </span>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></main>
+
+  <% include _footer.ejs %>
+
+  </body>
+</html>
