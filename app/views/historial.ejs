@@ -31,7 +31,8 @@
                     <td>{{historial.name}}</td>
                     <td>{{historial.nombre}}</td>
                     <td>{{historial.numero}}</td>
-                    <td><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{historial.latitude}}+{{historial.longitude}}" target="_blank">Enlace</a></td>
+                    <td ng-if="historial.latitude != 'null'"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{historial.latitude}}+{{historial.longitude}}" target="_blank">Enlace</a></td>
+                    <td ng-if="historial.latitude == 'null'">GPS desactivado</td>
                     <td>{{historial.time}}</td>
                 </tr>
                 </tbody>

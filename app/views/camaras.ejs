@@ -52,9 +52,13 @@
                   <span class="indigo-text grey-text text-darken-4">
                     Fecha inicio grabación: {{camara.time_online}}
                   </span><br>
-                  <span class="indigo-text grey-text text-darken-4">
+                  <span class="indigo-text grey-text text-darken-4" ng-if="camara.latitude == 'null'">
+                    Lugar: GPS desactivado
+                  </span>
+                  <span class="indigo-text grey-text text-darken-4" ng-if="camara.latitude != 'null'">
                     Lugar: <a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{camara.latitude}}+{{camara.longitude}}" target="_blank">Enlace</a>
                   </span>
+
                 </div>
               </div>
 
