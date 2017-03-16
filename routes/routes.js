@@ -14,6 +14,7 @@ module.exports = function (app) {
     app.get('/listcamaras', camaras.listindex); // vista para añadir camara
     app.get('/historial', camaras.historialindex); // Historial de conexiones
     app.get('/status', camaras.estadoindex); // vista para añadir camara
+    app.get('/incidencias', camaras.incidenciasindex); // Incidencias
 
     // API
     app.post('/camara', camaras.new); // crear nueva camara --> registro
@@ -31,6 +32,9 @@ module.exports = function (app) {
 
     app.get('/getEstado',  camaras.getEstado);
     app.put('/statusdevice/:mac', camaras.updateStateDevice); // actualizar el estado de los dispositivos
+
+    app.get('/getIncidencias',  camaras.getIncidencias);
+    app.put('/newincidence/:mac', camaras.addNewIncidence); // actualizar el estado de los dispositivos
 
 //    //petición get para acceder a la página de login
 //    app.get('/login', utilities.index);

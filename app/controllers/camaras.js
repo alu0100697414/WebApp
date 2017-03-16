@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 var Camara = require('../../app/models/camara');
 var Historial = require('../../app/models/historial');
 var StatusDevice = require('../../app/models/statusDevice');
+var Indidencias = require('../../app/models/incidencia');
 var Utilities = require('./utilities');
 var crypto = require('crypto');
 var ecdh = require('ecdh');
@@ -87,6 +88,10 @@ exports.estadoindex = function (req, res) {
     res.render('estado');
 };
 
+exports.incidenciasindex = function (req, res) {
+    res.render('incidencias');
+};
+
 
 /************************************************************************************/
 /*******    API Responces                                                  **********/
@@ -123,16 +128,21 @@ exports.deleteHistorial = function (request, response) {
 
 /* Get estado */
 exports.getEstado = function (request, response) {
-    // StatusDevice.find({mac: "12:12:12:12:12:12"}).exec(function (err, historiales) {
-    //     if (err) return response.send(error);
-    //
-    //     var new_state = new StatusDevice({ mac: "14:14:13:13:11:22", name: "Jose", number: "666666666", latitude: "23,211122", longitude: "-12,123123", distance: 13, battery: "96%" });
-    //     new_state.save();
-    // });
-
     StatusDevice.find({}, null, {sort: {distance: -1}},function (err, estados) {
         if (!err) {
             response.send(estados);
+        } else {
+            console.log(err);
+            response.send(error);
+        }
+    });
+};
+
+/* Get estado */
+exports.getIncidencias = function (request, response) {
+    Indidencias.find({}, null, {sort: {time: -1}},function (err, incidencias) {
+        if (!err) {
+            response.send(incidencias);
         } else {
             console.log(err);
             response.send(error);
@@ -296,10 +306,33 @@ exports.updateStateDevice = function (request, response) {
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
           device[0].distance = device[0].distance + 1;
-          device[0].battery = DBattery;
+          device[0].battery = DBattery + "%";
           device[0].save();
 
           response.send(ok);
         }
     });
+};
+
+/* add new incidence */
+exports.addNewIncidence = function (request, response) {
+
+    if (Utilities.isEmpty(request.params.mac)) return response.send(error_400);
+
+    if (Utilities.isEmpty(request.body.name)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.number)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.type_incidence)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.text_incidence)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.date)) return response.send(error_400);
+
+    var DName = Encrypt.decrypt(request.body.name);
+    var DNumber = Encrypt.decrypt(request.body.number);
+    var DTypeIncidence = Encrypt.decrypt(request.body.type_incidence);
+    var DTextIncidence = Encrypt.decrypt(request.body.text_incidence);
+    var DTime = Encrypt.decrypt(request.body.date);
+
+    var new_inc = new Indidencias({ mac: request.params.mac, name: DName, number: DNumber, type_incidence: DTypeIncidence, text_incidence: DTextIncidence, time: DTime });
+    new_inc.save();
+
+    response.send(ok);
 };

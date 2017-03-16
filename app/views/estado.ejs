@@ -27,9 +27,10 @@
                 <tr ng-repeat="estado in estados">
                     <td>{{estado.name}}</td>
                     <td>{{estado.number}}</td>
-                    <td ng-if="historial.latitude != 'null'"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{estado.latitude}}+{{estado.longitude}}" target="_blank">Enlace</a></td>
-                    <td ng-if="historial.latitude == 'null'">GPS desactivado</td>
-                    <td>{{estado.distance}} metros</td>
+                    <td ng-if="estado.latitude != 'null'"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{estado.latitude}}+{{estado.longitude}}" target="_blank">Enlace</a></td>
+                    <td ng-if="estado.latitude == 'null'">GPS desactivado</td>
+                    <td ng-if="estado.latitude != 'null'">{{estado.distance}} metros</td>
+                    <td ng-if="estado.latitude == 'null'">-</td>
                     <td>{{estado.battery}}</td>
                 </tr>
                 </tbody>
