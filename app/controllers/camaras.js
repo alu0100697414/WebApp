@@ -283,12 +283,14 @@ exports.updateStateDevice = function (request, response) {
     if (Utilities.isEmpty(request.body.latitude)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.longitude)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.battery)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.date)) return response.send(error_400);
 
     var DName = Encrypt.decrypt(request.body.name);
     var DNumber = Encrypt.decrypt(request.body.number);
     var DLatitude = Encrypt.decrypt(request.body.latitude);
     var DLongitude = Encrypt.decrypt(request.body.longitude);
     var DBattery = Encrypt.decrypt(request.body.battery);
+    var DTime = Encrypt.decrypt(request.body.date);
 
     StatusDevice.find({mac: request.params.mac}).exec(function (err, device) {
 
@@ -296,7 +298,7 @@ exports.updateStateDevice = function (request, response) {
 
         // If it is empty, a new device will be saved on db
         if (Utilities.isEmpty(device)){
-          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, battery: DBattery + "%" });
+          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time: DTime, battery: DBattery + "%" });
           new_state.save();
 
           response.send(ok);
@@ -306,6 +308,7 @@ exports.updateStateDevice = function (request, response) {
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
           device[0].distance = device[0].distance + 1;
+          device[0].time = DTime;
           device[0].battery = DBattery + "%";
           device[0].save();
 

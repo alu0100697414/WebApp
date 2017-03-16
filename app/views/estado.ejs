@@ -21,6 +21,7 @@
                     <th data-field="Lugar">Ubicación actual</th>
                     <th data-field="Distancia">Distancia del agresor</th>
                     <th data-field="Bateria">Nivel de batería</th>
+                    <th data-field="Bateria">Fecha</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,6 +33,7 @@
                     <td ng-if="estado.latitude != 'null'">{{estado.distance}} metros</td>
                     <td ng-if="estado.latitude == 'null'">-</td>
                     <td>{{estado.battery}}</td>
+                    <td>{{estado.time}}</td>
                 </tr>
                 </tbody>
             </table>
