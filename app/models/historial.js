@@ -3,12 +3,12 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var historialDataSchema = new Schema({
-    name:  String,
-    nombre: String,
-    numero: String,
-    time: String,
-    latitude: String,
-    longitude: String
+    name:  String,     // MAC
+    nombre: String,    // Name of user
+    numero: String,    // Numberphone
+    time: String,      // Date of connection
+    latitude: String,  // Latitud
+    longitude: String  // Longitud
 });
 
 

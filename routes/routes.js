@@ -13,7 +13,7 @@ module.exports = function (app) {
     app.get('/live', camaras.index); // index de todas las cámaras en directo
     app.get('/listcamaras', camaras.listindex); // vista para añadir camara
     app.get('/historial', camaras.historialindex); // Historial de conexiones
-    // app.get('/addcamara', camaras.addindex); // vista para añadir camara
+    app.get('/status', camaras.estadoindex); // vista para añadir camara
 
     // API
     app.post('/camara', camaras.new); // crear nueva camara --> registro
@@ -29,6 +29,8 @@ module.exports = function (app) {
     app.put('/online/:name', camaras.putonline); // poner una cámara onLive
     app.put('/offline/:name', camaras.putoffline); // poner una cámara offLive
 
+    app.get('/getEstado',  camaras.getEstado);
+    app.put('/statusdevice/:mac', camaras.updateStateDevice); // actualizar el estado de los dispositivos
 
 //    //petición get para acceder a la página de login
 //    app.get('/login', utilities.index);

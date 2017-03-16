@@ -270,6 +270,41 @@ streamingApp.controller('HistorialCtrl', function ($scope, $http, $location) {
 
 });
 
+streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
+
+    var updateData = function () {
+        $http({
+            method: 'GET',
+            url: '/getEstado',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.estados = response;
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            console.log($scope.codeStatus);
+        });
+    };
+
+    updateData();
+
+    $scope.estados = [];
+
+    $scope.isActive = function (route) {
+        var path = $location.absUrl().split("/");
+        console.log(route === path[path.length - 1]);
+        //console.log($location.absUrl());
+        //console.log(route === $location.path().toString);
+        return route === path[path.length - 1];
+    }
+
+    /* To refresh data */
+    var timer = setInterval(function () {
+        $scope.$apply(updateData);
+    }, 1000);
+
+});
 
 streamingApp.controller('addCamara', function ($scope, $http, $window, $location) {
     $scope.livecounter = 0;

@@ -1,0 +1,43 @@
+<% include _head.ejs %>
+<body ng-controller="EstadoCtrl">
+<% include _navbar.ejs %>
+
+<main><div class="container">
+    <div class="row">
+        <br><br>
+        <h2 class="center indigo-text"> Estado de las víctimas </h2>
+        <h6 class="center indigo-text"> (Estado actual en el que se encuentran las víctimas por medio de los dispositivos.) </h6>
+    </div>
+
+    <br>
+
+    <div class="row">
+        <div class="col m12 s12">
+            <table class="responsive-table bordered">
+                <thead>
+                <tr>
+                    <th data-field="nombre">Nombre</th>
+                    <th data-field="numero">Número de teléfono</th>
+                    <th data-field="Lugar">Ubicación actual</th>
+                    <th data-field="Distancia">Distancia del agresor</th>
+                    <th data-field="Bateria">Nivel de batería</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="estado in estados">
+                    <td>{{estado.name}}</td>
+                    <td>{{estado.number}}</td>
+                    <td ng-if="historial.latitude != 'null'"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{estado.latitude}}+{{estado.longitude}}" target="_blank">Enlace</a></td>
+                    <td ng-if="historial.latitude == 'null'">GPS desactivado</td>
+                    <td>{{estado.distance}} metros</td>
+                    <td>{{estado.battery}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div></main>
+<% include _footer.ejs %>
+</body>
+</html>
