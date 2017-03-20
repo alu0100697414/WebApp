@@ -66,6 +66,27 @@ Encrypt = (function() {
   };
 })();
 
+/* Util functions */
+function getFormattedDate() {
+    var date = new Date();
+    var str = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " - ";
+
+    if(date.getHours() <= 9){
+      str = str + "0" + date.getHours();
+    } else {
+      str = str + date.getHours();
+    }
+
+    str = str + ":";
+
+    if(date.getMinutes() <= 9){
+      str = str + "0" + date.getMinutes();
+    } else {
+      str = str + date.getMinutes();
+    }
+
+    return str;
+}
 
 /* Views Responce */
 exports.index = function (req, res) {
@@ -138,7 +159,7 @@ exports.getEstado = function (request, response) {
     });
 };
 
-/* Get estado */
+/* Get incidencias */
 exports.getIncidencias = function (request, response) {
     Indidencias.find({}, null, {sort: {time: -1}},function (err, incidencias) {
         if (!err) {
@@ -173,15 +194,19 @@ exports.delete = function (request, response) {
     });
 };
 
+/* Delete Inciende */
+exports.deleteIncidencias = function (request, response) {
+    if ( Utilities.isEmpty(request.params.id)) return response.send(error_400);
+    Indidencias.findOne({_id: request.params.id}, function (err, inc) {
+        if (err) return response.send(error);
+        if (Utilities.isEmpty(inc)) return response.send(error);
+        inc.remove();
+        response.send(ok);
+    });
+};
+
 /* New camera */
 exports.new = function (request, response) {
-
-    // var src = 'me';
-    // var enc = Encrypt.encrypt(src);
-    // console.log('encrypted: ', enc);
-    // var dec = Encrypt.decrypt(enc);
-    // // var dec = Encrypt.decrypt('rh7ro9NH');
-    // console.log('decrypted: ', dec);
 
     if ( Utilities.isEmpty(request.body.name)) return response.send(error_400);
     if ( Utilities.isEmpty(request.body.server)) return response.send(error_400);
@@ -200,7 +225,6 @@ exports.new = function (request, response) {
 
         response.send(ok);
     });
-
 };
 
 /* ¿on Live? */
@@ -283,14 +307,12 @@ exports.updateStateDevice = function (request, response) {
     if (Utilities.isEmpty(request.body.latitude)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.longitude)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.battery)) return response.send(error_400);
-    if (Utilities.isEmpty(request.body.date)) return response.send(error_400);
 
     var DName = Encrypt.decrypt(request.body.name);
     var DNumber = Encrypt.decrypt(request.body.number);
     var DLatitude = Encrypt.decrypt(request.body.latitude);
     var DLongitude = Encrypt.decrypt(request.body.longitude);
     var DBattery = Encrypt.decrypt(request.body.battery);
-    var DTime = Encrypt.decrypt(request.body.date);
 
     StatusDevice.find({mac: request.params.mac}).exec(function (err, device) {
 
@@ -298,7 +320,7 @@ exports.updateStateDevice = function (request, response) {
 
         // If it is empty, a new device will be saved on db
         if (Utilities.isEmpty(device)){
-          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time: DTime, battery: DBattery + "%" });
+          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time: getFormattedDate(), battery: DBattery + "%" });
           new_state.save();
 
           response.send(ok);
@@ -308,7 +330,7 @@ exports.updateStateDevice = function (request, response) {
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
           device[0].distance = device[0].distance + 1;
-          device[0].time = DTime;
+          device[0].time = getFormattedDate();
           device[0].battery = DBattery + "%";
           device[0].save();
 
@@ -326,16 +348,76 @@ exports.addNewIncidence = function (request, response) {
     if (Utilities.isEmpty(request.body.number)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.type_incidence)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.text_incidence)) return response.send(error_400);
-    if (Utilities.isEmpty(request.body.date)) return response.send(error_400);
 
     var DName = Encrypt.decrypt(request.body.name);
     var DNumber = Encrypt.decrypt(request.body.number);
     var DTypeIncidence = Encrypt.decrypt(request.body.type_incidence);
     var DTextIncidence = Encrypt.decrypt(request.body.text_incidence);
-    var DTime = Encrypt.decrypt(request.body.date);
 
-    var new_inc = new Indidencias({ mac: request.params.mac, name: DName, number: DNumber, type_incidence: DTypeIncidence, text_incidence: DTextIncidence, time: DTime });
+    var new_inc = new Indidencias({ mac: request.params.mac, name: DName, number: DNumber, type_incidence: DTypeIncidence, text_incidence: DTextIncidence, time: getFormattedDate() });
     new_inc.save();
+
+    response.send(ok);
+};
+
+/* add new incidence */
+exports.updateIncidences = function (request, response) {
+
+    var max_time_to_ping = 120; // In seconds
+    var max_time_to_inc  = 120; // In seconds
+
+    // Buscamos todos los dispositivos para comprobar si hay que generar incidencias del tipo 2
+    StatusDevice.find({}, function(err, estados) {
+        if (!err){
+          // Comprobamos para cada dispositivo si lleva un tiempo determinado sin enviar un ping
+          for (var i = 0; i < estados.length; i++) {
+            // Tiempo actual
+            var time_now = Math.floor(Date.now() / 1000);
+
+            // Ultima vez del ping del usuario
+            var dateString = estados[i].time, dateTimeParts = dateString.split(' - '), timeParts = dateTimeParts[1].split(':'), dateParts = dateTimeParts[0].split('/'), date;
+            var time = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1]).getTime() / 1000;
+
+            // Si lleva max_time_to_ping sin realizar un ping, comprobamos
+            if((time_now - time) > max_time_to_ping){
+              var estado = estados[i];
+
+              Indidencias.findOne({mac: estado.mac, type_incidence: 2}, {}, { sort: {'time' : -1} }, function(err, inc) {
+                if (!err){
+                  // Si no ha generado ninguna incidencia de este tipo, se genera automáticamente
+                  if(inc == null){
+                      var new_inc = new Indidencias({ mac: estado.mac, name: estado.name, number: estado.number, type_incidence: 2, text_incidence: "El dispositivo está inactivo", time: getFormattedDate() });
+                      new_inc.save();
+                  } else {
+                      // // Obtenemos el timestamp de la última incidencia de este tipo
+                      // var dateString = inc.time, dateTimeParts = dateString.split(' - '), timeParts = dateTimeParts[1].split(':'), dateParts = dateTimeParts[0].split('/'), date;
+                      // var last_time_inc = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1]).getTime() / 1000;
+                      //
+                      // // Si pasó el tiempo mínimo para generar otra incidencia, la generamos
+                      // if((time_now - last_time_inc) > max_time_to_inc){
+                      //   var new_inc = new Indidencias({ mac: estado.mac, name: estado.name, number: estado.number, type_incidence: 2, text_incidence: "El dispositivo está inactivo", time: getFormattedDate() });
+                      //   new_inc.save();
+                      // }
+
+                      inc.name = estado.name;
+                      inc.number = estado.number;
+                      inc.time = getFormattedDate();
+                      inc.save();
+                  }
+                } else {
+                  throw err;
+                }
+              });
+            }
+          };
+        } else {
+          throw err;
+        }
+    });
+
+    // Indidencias.remove({}, function(err) {
+    //    console.log('collection removed')
+    // });
 
     response.send(ok);
 };

@@ -18,10 +18,10 @@ module.exports = function (app) {
 
     // API
     app.post('/camara', camaras.new); // crear nueva camara --> registro
-    app.delete('/camara/:id', camaras.delete);
+    app.delete('/camara/:id', camaras.delete); // Borra cámara registrada
 
-    app.get('/gethistorial', camaras.getHistorial);
-    app.delete('/deletehistorial', camaras.deleteHistorial);
+    app.get('/gethistorial', camaras.getHistorial); // Obtiene el historial de la bbdd
+    app.delete('/deletehistorial', camaras.deleteHistorial); // Borrar historial
 
     app.get('/camaras', camaras.getall); // json con todas las camaras del servidor
     app.get('/livecameras', camaras.getalllive); // json con todas las camaras onlive del servidor
@@ -30,11 +30,14 @@ module.exports = function (app) {
     app.put('/online/:name', camaras.putonline); // poner una cámara onLive
     app.put('/offline/:name', camaras.putoffline); // poner una cámara offLive
 
-    app.get('/getEstado',  camaras.getEstado);
+    app.get('/getEstado',  camaras.getEstado); // Obtiene el estado de los dispositivos de los usuarios
     app.put('/statusdevice/:mac', camaras.updateStateDevice); // actualizar el estado de los dispositivos
 
-    app.get('/getIncidencias',  camaras.getIncidencias);
-    app.put('/newincidence/:mac', camaras.addNewIncidence); // actualizar el estado de los dispositivos
+    app.get('/getIncidencias',  camaras.getIncidencias); // Obtiene todas las incidencias
+    app.delete('/incidencia/:id', camaras.deleteIncidencias); // Borra cámara registrada
+    app.put('/newincidence/:mac', camaras.addNewIncidence); // Añade nueva incidencia para un usuario
+    app.post('/updateincidences', camaras.updateIncidences); // Comprueba si hay que generar nuevas incidencias
+
 
 //    //petición get para acceder a la página de login
 //    app.get('/login', utilities.index);
