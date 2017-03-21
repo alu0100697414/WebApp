@@ -107,7 +107,7 @@ function getHaversineDistance(lat1, lon1, lat2, lon2) {
   var d = R * c;
 
   if(isNaN(d) == false){
-    return Math.round(d * 100) / 100;
+    return Math.round(d * 1000) / 1000;
   } else {
     return -1;
   }
@@ -385,7 +385,7 @@ exports.updateStateDevice = function (request, response) {
             });
           }
 
-          response.send(ok);
+          response.send({"distancia": d});
         }
     });
 };
