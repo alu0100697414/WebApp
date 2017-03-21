@@ -88,6 +88,31 @@ function getFormattedDate() {
     return str;
 }
 
+// Convierte en radianes
+function toRad(Value) {
+    /** Converts numeric degrees to radians */
+    return Value * Math.PI / 180;
+}
+
+// Devuelve la distancia entre dos puntos geolocalizados
+function getHaversineDistance(lat1, lon1, lat2, lon2) {
+  var R = 6371; // km
+  //has a problem with the .toRad() method below.
+  var dLat = toRad((lat2-lat1));
+  var dLon = toRad((lon2-lon1));
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c;
+
+  if(isNaN(d) == false){
+    return Math.round(d * 100) / 100;
+  } else {
+    return -1;
+  }
+}
+
 /* Views Responce */
 exports.index = function (req, res) {
     res.render('camaras');
@@ -329,7 +354,7 @@ exports.updateStateDevice = function (request, response) {
           device[0].number = DNumber;
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
-          device[0].distance = device[0].distance + 1;
+          device[0].distance = getHaversineDistance(DLatitude, DLongitude, 28.486291, -16.317592); // 28.486291, -16.317592
           device[0].time = getFormattedDate();
           device[0].battery = DBattery + "%";
           device[0].save();

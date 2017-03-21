@@ -30,8 +30,8 @@
                     <td>{{estado.number}}</td>
                     <td ng-if="estado.latitude != 'null'"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{estado.latitude}}+{{estado.longitude}}" target="_blank">Enlace</a></td>
                     <td ng-if="estado.latitude == 'null'">GPS desactivado</td>
-                    <td ng-if="estado.latitude != 'null'">{{estado.distance}} metros</td>
-                    <td ng-if="estado.latitude == 'null'">-</td>
+                    <td ng-if="estado.latitude != 'null && estado.distance != -1'">{{estado.distance}} Km</td>
+                    <td ng-if="estado.latitude == 'null && estado.distance == 1'">-</td>
                     <td>{{estado.battery}}</td>
                     <td>{{estado.time}}</td>
                 </tr>
