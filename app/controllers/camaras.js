@@ -350,14 +350,40 @@ exports.updateStateDevice = function (request, response) {
 
           response.send(ok);
         } else {
+
+          // Obtenemos la distancia entre víctima y agresor
+          var d = getHaversineDistance(DLatitude, DLongitude, 28.486291, -16.317592); // 28.486291, -16.317592
+
+          // Actializamos la información de la víctima y el estado de su dispositivo
           device[0].name = DName;
           device[0].number = DNumber;
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
-          device[0].distance = getHaversineDistance(DLatitude, DLongitude, 28.486291, -16.317592); // 28.486291, -16.317592
+          device[0].distance = d;
           device[0].time = getFormattedDate();
           device[0].battery = DBattery + "%";
           device[0].save();
+
+          // Si la distancia es menor a 1 km, generamos una incidencia
+          if(d < 1){
+            Indidencias.findOne({mac: request.params.mac, type_incidence: 3}, {}, { sort: {'time' : -1} }, function(err, inc) {
+              if (!err){
+                // Si no ha generado ninguna incidencia de este tipo, se genera automáticamente
+                if(inc == null){
+                    var new_inc = new Indidencias({ mac: request.params.mac, name: DName, number: DNumber, type_incidence: 3, text_incidence: "El agresor está a " + d + " Km de la víctima", time: getFormattedDate() });
+                    new_inc.save();
+                } else {
+                    inc.name = DName;
+                    inc.number = DNumber;
+                    inc.text_incidence = "El agresor está a " + d + " Km de la víctima";
+                    inc.time = getFormattedDate();
+                    inc.save();
+                }
+              } else {
+                throw err;
+              }
+            });
+          }
 
           response.send(ok);
         }
