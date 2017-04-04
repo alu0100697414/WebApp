@@ -351,8 +351,27 @@ exports.updateStateDevice = function (request, response) {
           response.send(ok);
         } else {
 
+          /** ESTO SOLO ES PARA GENERAR PUNTOS ALEATORIOS DE PRUEBA, SE DEBE SUSTITUIR POR LA POSICIÓN QUE LLEGUE DEL AGRESOR. **/
+          var r = 1500/111300 // = 1500 meters
+          , y0 = DLatitude
+          , x0 = DLongitude
+          , u = Math.random()
+          , v = Math.random()
+          , w = r * Math.sqrt(u)
+          , t = 2 * Math.PI * v
+          , x = w * Math.cos(t)
+          , y1 = w * Math.sin(t)
+          , x1 = x / Math.cos(y0);
+
+          newY = +y0 + +y1;
+          newX = +x0 + +x1;
+
+          console.log(newY);
+          console.log(newX);
+          /** FIN DE LA PARTE DE PRUEBA **/
+
           // Obtenemos la distancia entre víctima y agresor
-          var d = getHaversineDistance(DLatitude, DLongitude, 28.486291, -16.317592); // 28.486291, -16.317592
+          var d = getHaversineDistance(DLatitude, DLongitude, newY, newX); // 28.486291, -16.317592
 
           // Actializamos la información de la víctima y el estado de su dispositivo
           device[0].name = DName;
@@ -365,7 +384,7 @@ exports.updateStateDevice = function (request, response) {
           device[0].save();
 
           // Si la distancia es menor a 1 km, generamos una incidencia
-          if(d < 1){
+          if(d < 1 && d != -1){
             Indidencias.findOne({mac: request.params.mac, type_incidence: 3}, {}, { sort: {'time' : -1} }, function(err, inc) {
               if (!err){
                 // Si no ha generado ninguna incidencia de este tipo, se genera automáticamente
