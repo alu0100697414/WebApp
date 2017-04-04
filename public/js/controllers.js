@@ -299,9 +299,28 @@ streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
         return route === path[path.length - 1];
     }
 
+    $scope.livecounter = 0;
+    var updateLivecounter = function(){
+        $http({
+            method: 'GET',
+            url: '/livecameras',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.livecounter = response.length;
+            console.log(response);
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            $scope.livecounter = 0;
+            console.log($scope.livecounter);
+        });
+    }
+
     /* To refresh data */
     var timer = setInterval(function () {
         $scope.$apply(updateData);
+        $scope.$apply(updateLivecounter);
     }, 1000);
 
 });
@@ -368,11 +387,30 @@ streamingApp.controller('IncidenciasCtrl', function ($scope, $http, $location) {
         return route === path[path.length - 1];
     }
 
+    $scope.livecounter = 0;
+    var updateLivecounter = function(){
+        $http({
+            method: 'GET',
+            url: '/livecameras',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.livecounter = response.length;
+            console.log(response);
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            $scope.livecounter = 0;
+            console.log($scope.livecounter);
+        });
+    }
+
     /* To refresh data */
     var timer = setInterval(function () {
         $scope.$apply(updateData);
         $scope.$apply(updateIncidences);
-    }, 5000);
+        $scope.$apply(updateLivecounter);
+    }, 1000);
 
 });
 
@@ -434,20 +472,22 @@ streamingApp.controller('addCamara', function ($scope, $http, $window, $location
 streamingApp.controller('HomeCtrl', function ($scope, $http, $window, $location) {
 
     $scope.livecounter = 0;
-    $http({
-        method: 'GET',
-        url: '/livecameras',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function (response) {
-        $scope.codeStatus = response;
-        $scope.livecounter = response.length;
-        console.log(response);
-    }).error(function (response) {  // Getting Error Response in Callback
-        console.log("error");
-        $scope.codeStatus = response || "Request failed";
-        $scope.livecounter = 0;
-        console.log($scope.livecounter);
-    });
+    var updateLivecounter = function(){
+        $http({
+            method: 'GET',
+            url: '/livecameras',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.livecounter = response.length;
+            console.log(response);
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            $scope.livecounter = 0;
+            console.log($scope.livecounter);
+        });
+    }
 
     $scope.isActive = function (route) {
 
@@ -458,5 +498,9 @@ streamingApp.controller('HomeCtrl', function ($scope, $http, $window, $location)
         return route === path[path.length - 1];
     }
 
+    /* To refresh data */
+    var timer = setInterval(function () {
+        $scope.$apply(updateLivecounter);
+    }, 1000);
 
 });
