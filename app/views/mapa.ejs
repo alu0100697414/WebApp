@@ -11,7 +11,7 @@
   <div class="row">
     <div class="col m4 s4">
       <div class="collection" ng-repeat="camara in camaras">
-        <a ng-click="showMap(camara._id,camara.latitude,camara.longitude,camara.latitude_aggressor,camara.longitude_aggressor)" href="" class="collection-item">{{camara.name}} &#13; (tel: {{camara.number}})</a>
+        <a ng-attr-id="{{camara._id}}" ng-click="showMap(camara._id)" href="" class="collection-item">{{camara.name}} &#13; (tel: {{camara.number}})</a>
       </div>
     </div>
 

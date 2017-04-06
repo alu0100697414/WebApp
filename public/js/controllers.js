@@ -574,8 +574,16 @@ streamingApp.controller('MapaCtrl', function ($scope, $http, $window, $location,
           }).success(function (response) {
               $scope.codeStatus = response;
 
-              marker_v.setMap(null);
-              marker_a.setMap(null);
+              var mapOptions = {
+                zoom: 12,
+                center: new google.maps.LatLng(response.latitude, response.longitude)
+              }
+              map.setOptions(mapOptions);
+
+              if(marker_v != null  && marker_a != null){
+                  marker_v.setMap(null);
+                  marker_a.setMap(null);
+              }
 
               marker_v = new google.maps.Marker({
                   position: new google.maps.LatLng(response.latitude, response.longitude),
@@ -598,29 +606,16 @@ streamingApp.controller('MapaCtrl', function ($scope, $http, $window, $location,
         }
     };
 
-    // Muestra el mapa personalizado para el item que se pulsara en la lista
-    $scope.showMap = function (id, v_lat, v_long, a_lat, a_long) {
+    // Añade id a la url para poder buscar los markers y el mapa para esa victima y agresor en particular
+    $scope.showMap = function (id) {
       $location.hash(id);
 
-      var mapOptions = {
-                zoom: 12,
-                center: new google.maps.LatLng(v_lat, v_long)
-            }
-            map.setOptions(mapOptions);
+      var els = [].slice.apply(document.getElementsByClassName("collection-item active"));
+      for (var i = 0; i < els.length; i++) {
+          els[i].className = els[i].className.replace("collection-item active", "collection-item");
+      }
 
-            marker_v = new google.maps.Marker({
-                position: new google.maps.LatLng(v_lat, v_long),
-                animation: google.maps.Animation.Bounce,
-                map: map
-            });
-            marker_v.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-
-            marker_a = new google.maps.Marker({
-                position: new google.maps.LatLng(a_lat, a_long),
-                animation: google.maps.Animation.Bounce,
-                map: map
-            });
-            marker_a.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+      document.getElementById(id).className = 'collection-item active';
     };
 
     /* To refresh data */
