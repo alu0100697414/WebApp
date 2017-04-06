@@ -138,6 +138,10 @@ exports.incidenciasindex = function (req, res) {
     res.render('incidencias');
 };
 
+exports.mapaindex = function (req, res) {
+    res.render('mapa');
+};
+
 
 /************************************************************************************/
 /*******    API Responces                                                  **********/
@@ -378,6 +382,8 @@ exports.updateStateDevice = function (request, response) {
           device[0].number = DNumber;
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
+          device[0].latitude_aggressor = newY;
+          device[0].longitude_aggressor = newX;
           device[0].distance = d;
           device[0].time = getFormattedDate();
           device[0].battery = DBattery + "%";
@@ -490,4 +496,25 @@ exports.updateIncidences = function (request, response) {
     // });
 
     response.send(ok);
+};
+
+/* All cams */
+exports.getallstatusdevice = function (request, response) {
+    StatusDevice.find({}, {}, { sort: {'distance' : -1} }, function (err, camaras) {
+        if (!err) {
+            response.send(camaras);
+        } else {
+            console.log(err);
+            response.send(error);
+        }
+    });
+};
+
+/* update markers del mapa actual */
+exports.updatemarkers = function (request, response) {
+    StatusDevice.findOne({_id: request.params.id}, function (err, camara) {
+        if (err) return response.send(error);
+        if (Utilities.isEmpty(camara)) return response.send(error);
+        response.send(camara);
+    });
 };

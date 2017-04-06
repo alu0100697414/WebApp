@@ -504,3 +504,129 @@ streamingApp.controller('HomeCtrl', function ($scope, $http, $window, $location)
     }, 1000);
 
 });
+
+streamingApp.controller('MapaCtrl', function ($scope, $http, $window, $location, $sce, $location, $anchorScroll, $window) {
+
+    $scope.camaras = [];
+    var isElement = function (element, list) {
+        var keepGoing = true;
+        angular.forEach(list, function (element_list) {
+            if (keepGoing) {
+                if (angular.equals(element_list._id, element._id)) {
+                    keepGoing = false;
+                }
+            }
+        });
+        return keepGoing;
+    };
+
+    // Actualiza el menú de items por si se añade alguno nuevo
+    var updateMenu = function () {
+        $http({
+            method: 'GET',
+            url: '/allstatusdevice',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            if ($scope.camaras.length !== response.length) {
+                if (response.length > $scope.camaras.length) { // Si añadimos
+                    $scope.camaras = response;
+                    angular.forEach(response, function (camara, index) {
+                        if (isElement(camara, $scope.camaras)) {
+                            $scope.camaras.push(camara);
+                            $window.location.reload();                    //$scope.camaras = response;
+
+                        }
+                    })
+                } else {
+                    angular.forEach($scope.camaras, function (camara, index) {
+                        if (response.indexOf(camara) < 0) {
+                            $scope.camaras.pop(camara);
+                        }
+                    })
+                }
+            }
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            console.log($scope.codeStatus);
+        });
+    };
+
+    // Inicializamos el mapa para luego poder trabajar con el sin
+    // que sea necesario inicializarlo de nuevo
+    var mapOptions = {
+      zoom: 2,
+      center: new google.maps.LatLng(40.433689, -3.703578)
+    }
+
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    var marker_v, marker_a;
+
+    // Actualizamos los markers del mapa para la victima seleccionada
+    var updateMarkers = function () {
+        // Si la url tiene el id de un dispositivo, actualizamos markers
+        if($location.url() !== ""){
+          $http({
+              method: 'GET',
+              url: '/updatemarkers/' + $location.url().substr(1),
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          }).success(function (response) {
+              $scope.codeStatus = response;
+
+              marker_v.setMap(null);
+              marker_a.setMap(null);
+
+              marker_v = new google.maps.Marker({
+                  position: new google.maps.LatLng(response.latitude, response.longitude),
+                  animation: google.maps.Animation.Bounce,
+                  map: map
+              });
+              marker_v.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+
+              marker_a = new google.maps.Marker({
+                  position: new google.maps.LatLng(response.latitude_aggressor, response.longitude_aggressor),
+                  animation: google.maps.Animation.Bounce,
+                  map: map
+              });
+              marker_a.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+          }).error(function (response) {  // Getting Error Response in Callback
+              console.log("error");
+              $scope.codeStatus = response || "Request failed";
+              console.log($scope.codeStatus);
+          });
+        }
+    };
+
+    // Muestra el mapa personalizado para el item que se pulsara en la lista
+    $scope.showMap = function (id, v_lat, v_long, a_lat, a_long) {
+      $location.hash(id);
+
+      var mapOptions = {
+                zoom: 12,
+                center: new google.maps.LatLng(v_lat, v_long)
+            }
+            map.setOptions(mapOptions);
+
+            marker_v = new google.maps.Marker({
+                position: new google.maps.LatLng(v_lat, v_long),
+                animation: google.maps.Animation.Bounce,
+                map: map
+            });
+            marker_v.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+
+            marker_a = new google.maps.Marker({
+                position: new google.maps.LatLng(a_lat, a_long),
+                animation: google.maps.Animation.Bounce,
+                map: map
+            });
+            marker_a.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+    };
+
+    /* To refresh data */
+    var timer = setInterval(function () {
+        $scope.$apply(updateMenu);
+        $scope.$apply(updateMarkers);
+    }, 1000);
+
+});
