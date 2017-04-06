@@ -456,7 +456,7 @@ exports.updateIncidences = function (request, response) {
 
             // Si lleva max_time_to_ping sin realizar un ping, comprobamos
             if((time_now - time) > max_time_to_ping){
-              var estado = estados[i];
+              const estado = estados[i];
 
               Indidencias.findOne({mac: estado.mac, type_incidence: 2}, {}, { sort: {'time' : -1} }, function(err, inc) {
                 if (!err){
