@@ -356,7 +356,7 @@ exports.updateStateDevice = function (request, response) {
         } else {
 
           /** ESTO SOLO ES PARA GENERAR PUNTOS ALEATORIOS DE PRUEBA, SE DEBE SUSTITUIR POR LA POSICIÓN QUE LLEGUE DEL AGRESOR. **/
-          var r = 1500/111300 // = 1500 meters
+          var r = 1000/111300 // = 1500 meters
           , y0 = DLatitude
           , x0 = DLongitude
           , u = Math.random()
