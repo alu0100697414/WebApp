@@ -355,35 +355,17 @@ exports.updateStateDevice = function (request, response) {
           response.send(ok);
         } else {
 
-          /** ESTO SOLO ES PARA GENERAR PUNTOS ALEATORIOS DE PRUEBA, SE DEBE SUSTITUIR POR LA POSICIÓN QUE LLEGUE DEL AGRESOR. **/
-          var r = 1000/111300 // = 1500 meters
-          , y0 = DLatitude
-          , x0 = DLongitude
-          , u = Math.random()
-          , v = Math.random()
-          , w = r * Math.sqrt(u)
-          , t = 2 * Math.PI * v
-          , x = w * Math.cos(t)
-          , y1 = w * Math.sin(t)
-          , x1 = x / Math.cos(y0);
-
-          newY = +y0 + +y1;
-          newX = +x0 + +x1;
-
-          console.log(newY);
-          console.log(newX);
-          /** FIN DE LA PARTE DE PRUEBA **/
-
           // Obtenemos la distancia entre víctima y agresor
-          var d = getHaversineDistance(DLatitude, DLongitude, newY, newX); // 28.486291, -16.317592
+          var d = getHaversineDistance(DLatitude, DLongitude, device[0].latitude_aggressor, device[0].longitude_aggressor); // 28.486291, -16.317592
 
           // Actializamos la información de la víctima y el estado de su dispositivo
+          console.log(DLatitude);
+          console.log(DLongitude);
+
           device[0].name = DName;
           device[0].number = DNumber;
           device[0].latitude = DLatitude;
           device[0].longitude = DLongitude;
-          device[0].latitude_aggressor = newY;
-          device[0].longitude_aggressor = newX;
           device[0].distance = d;
           device[0].time = getFormattedDate();
           device[0].battery = DBattery + "%";
@@ -517,4 +499,30 @@ exports.updatemarkers = function (request, response) {
         if (Utilities.isEmpty(camara)) return response.send(error);
         response.send(camara);
     });
+};
+
+/* update the GPS position of aggressor for a victim */
+exports.updateAggressorPosition = function (request, response) {
+
+    if (Utilities.isEmpty(request.params.victim_mac)) return response.send(error_400);
+
+    if (Utilities.isEmpty(request.body.latitude_aggressor)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.longitude_aggressor)) return response.send(error_400);
+
+    console.log(request.body.latitude_aggressor);
+    console.log(request.body.longitude_aggressor);
+
+    StatusDevice.find({mac: request.params.victim_mac}).exec(function (err, device) {
+
+      if (err) return response.send(error);
+
+      // If it is empty, a new device will be saved on db
+      if (!Utilities.isEmpty(device)){
+        device[0].latitude_aggressor = request.body.latitude_aggressor;
+        device[0].longitude_aggressor = request.body.longitude_aggressor;
+        device[0].save();
+
+        response.send(ok);
+      }
+    })
 };
