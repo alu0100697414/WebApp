@@ -556,7 +556,7 @@ streamingApp.controller('MapaCtrl', function ($scope, $http, $window, $location,
     // Inicializamos el mapa para luego poder trabajar con el sin
     // que sea necesario inicializarlo de nuevo
     var mapOptions = {
-      zoom: 2,
+      zoom: 15,
       center: new google.maps.LatLng(40.433689, -3.703578)
     }
 
@@ -575,7 +575,7 @@ streamingApp.controller('MapaCtrl', function ($scope, $http, $window, $location,
               $scope.codeStatus = response;
 
               var mapOptions = {
-                zoom: 12,
+                zoom: map.getZoom(),
                 center: new google.maps.LatLng(response.latitude, response.longitude)
               }
               map.setOptions(mapOptions);
