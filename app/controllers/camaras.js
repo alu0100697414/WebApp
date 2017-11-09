@@ -518,11 +518,13 @@ exports.updateAggressorPosition = function (request, response) {
 
       // If it is empty, a new device will be saved on db
       if (!Utilities.isEmpty(device)){
+        var d = device[0].distance;
+
         device[0].latitude_aggressor = request.body.latitude_aggressor;
         device[0].longitude_aggressor = request.body.longitude_aggressor;
         device[0].save();
 
-        response.send(ok);
+        response.send({"distancia": d});
       }
     })
 };
