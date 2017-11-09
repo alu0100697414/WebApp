@@ -438,33 +438,15 @@ exports.updateIncidences = function (request, response) {
 
             // Si lleva max_time_to_ping sin realizar un ping, comprobamos
             if((time_now - time) > max_time_to_ping){
-              const estado = estados[i];
-
-              Indidencias.findOne({mac: estado.mac, type_incidence: 2}, {}, { sort: {'time' : -1} }, function(err, inc) {
-                if (!err){
-                  // Si no ha generado ninguna incidencia de este tipo, se genera automáticamente
-                  if(inc == null){
-                      var new_inc = new Indidencias({ mac: estado.mac, name: estado.name, number: estado.number, type_incidence: 2, text_incidence: "El dispositivo está inactivo", time: getFormattedDate() });
-                      new_inc.save();
-                  } else {
-                      // // Obtenemos el timestamp de la última incidencia de este tipo
-                      // var dateString = inc.time, dateTimeParts = dateString.split(' - '), timeParts = dateTimeParts[1].split(':'), dateParts = dateTimeParts[0].split('/'), date;
-                      // var last_time_inc = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1]).getTime() / 1000;
-                      //
-                      // // Si pasó el tiempo mínimo para generar otra incidencia, la generamos
-                      // if((time_now - last_time_inc) > max_time_to_inc){
-                      //   var new_inc = new Indidencias({ mac: estado.mac, name: estado.name, number: estado.number, type_incidence: 2, text_incidence: "El dispositivo está inactivo", time: getFormattedDate() });
-                      //   new_inc.save();
-                      // }
-
-                      inc.name = estado.name;
-                      inc.number = estado.number;
-                      inc.time = getFormattedDate();
-                      inc.save();
+              // Creamos o actualizamos la incidencia correspondiente
+              Indidencias.update (
+                { mac: estados[i].mac, type_incidence: 2 },
+                { mac: estados[i].mac, name: estados[i].name, number: estados[i].number, type_incidence: 2, text_incidence: "El dispositivo está inactivo", time: getFormattedDate() },
+                { sort: {'time' : -1}, upsert: true },
+                function(err, inc) {
+                  if (err){
+                    throw err;
                   }
-                } else {
-                  throw err;
-                }
               });
             }
           };
