@@ -356,7 +356,7 @@ exports.updateStateDevice = function (request, response) {
         } else {
 
           // Obtenemos la distancia entre víctima y agresor
-          var d = getHaversineDistance(DLatitude, DLongitude, device[0].latitude_aggressor, device[0].longitude_aggressor); // 28.486291, -16.317592
+          var d = getHaversineDistance(DLatitude, DLongitude, device[0].latitude_aggressor, device[0].longitude_aggressor);
 
           // Actializamos la información de la víctima y el estado de su dispositivo
           console.log(DLatitude);
