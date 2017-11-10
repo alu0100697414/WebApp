@@ -392,6 +392,27 @@ exports.updateStateDevice = function (request, response) {
             });
           }
 
+          // Se genera incidencia si no se consigue calcular la distancia entre víctima y agresor.
+          else if(d == -1) {
+            Indidencias.findOne({mac: request.params.mac, type_incidence: 5}, {}, { sort: {'time' : -1} }, function(err, inc) {
+              if (!err){
+                // Si no ha generado ninguna incidencia de este tipo, se genera automáticamente
+                if(inc == null){
+                    var new_inc = new Indidencias({ mac: request.params.mac, name: DName, number: DNumber, type_incidence: 5, text_incidence: "No se ha podido calcular la distancia", time: getFormattedDate() });
+                    new_inc.save();
+                } else {
+                    inc.name = DName;
+                    inc.number = DNumber;
+                    inc.text_incidence = "No se ha podido calcular la distancia";
+                    inc.time = getFormattedDate();
+                    inc.save();
+                }
+              } else {
+                throw err;
+              }
+            });
+          }
+
           response.send({"distancia": d});
         }
     });
