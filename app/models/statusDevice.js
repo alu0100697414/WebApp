@@ -11,6 +11,7 @@ var statusDeviceSchema = new Schema({
     latitude_aggressor: String,   // aggressor latitude
     longitude_aggressor: String,  // aggressor longitude
     distance: Number,   // Distance between victim and aggressor
+    time_next_ping: Number,   // Time to next ping
     time: String,       // Last time ping
     battery: String     // Batery level of the user
 });

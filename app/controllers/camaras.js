@@ -113,6 +113,39 @@ function getHaversineDistance(lat1, lon1, lat2, lon2) {
   }
 }
 
+// Devuelve el tiempo en segundos hasta el próximo ping
+// según la distancia que haya entre víctima y agresor.
+function getTimeToNextPing(distance) {
+
+  if(distance <= 5){
+    return 10;
+  } else if(distance > 5 && distance <= 10){
+    return 120;
+  } else if(distance > 10 && distance <= 50){
+    return 300;
+  } else if(distance > 50 && distance <= 100){
+    return 1200;
+  } else if(distance > 100 && distance <= 200){
+    return 2400;
+  } else if(distance > 200 && distance <= 500){
+    return 3600;
+  } else if(distance > 500 && distance <= 1000){
+    return 6000;
+  } else if(distance > 1000){
+    return 8400;
+  } else {
+    return 10;
+  }
+
+  // if(distance <= 0.003){
+  //   return 3;
+  // } else if(distance > 0.003 && distance <= 0.010){
+  //   return 10;
+  // } else {
+  //   return 20;
+  // }
+}
+
 /* Views Responce */
 exports.index = function (req, res) {
     res.render('camaras');
@@ -358,9 +391,13 @@ exports.updateStateDevice = function (request, response) {
           // Obtenemos la distancia entre víctima y agresor
           var d = getHaversineDistance(DLatitude, DLongitude, device[0].latitude_aggressor, device[0].longitude_aggressor);
 
+          // Obtenemos el tiempo hasta el proximo ping
+          var time_to_next_ping = getTimeToNextPing(d);
+
           // Actializamos la información de la víctima y el estado de su dispositivo
-          console.log(DLatitude);
-          console.log(DLongitude);
+          console.log("Latitud víctima: " + DLatitude);
+          console.log("Longitud víctima: " + DLongitude);
+          console.log("Siguiente ping en: " + time_to_next_ping + " segundos.");
 
           device[0].name = DName;
           device[0].number = DNumber;
@@ -368,6 +405,7 @@ exports.updateStateDevice = function (request, response) {
           device[0].longitude = DLongitude;
           device[0].distance = d;
           device[0].time = getFormattedDate();
+          device[0].time_next_ping = time_to_next_ping;
           device[0].battery = DBattery + "%";
           device[0].save();
 
@@ -413,7 +451,7 @@ exports.updateStateDevice = function (request, response) {
             });
           }
 
-          response.send({"distancia": d});
+          response.send({"distancia": d, "nextPing": time_to_next_ping});
         }
     });
 };
