@@ -382,7 +382,7 @@ exports.updateStateDevice = function (request, response) {
 
         // If it is empty, a new device will be saved on db
         if (Utilities.isEmpty(device)){
-          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time: getFormattedDate(), battery: DBattery + "%" });
+          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time_next_ping: 10, time: getFormattedDate(), battery: DBattery + "%" });
           new_state.save();
 
           response.send(ok);
@@ -480,9 +480,6 @@ exports.addNewIncidence = function (request, response) {
 /* add new incidence */
 exports.updateIncidences = function (request, response) {
 
-    var max_time_to_ping = 120; // In seconds
-    var max_time_to_inc  = 120; // In seconds
-
     // Buscamos todos los dispositivos para comprobar si hay que generar incidencias del tipo 2
     StatusDevice.find({}, function(err, estados) {
         if (!err){
@@ -494,6 +491,10 @@ exports.updateIncidences = function (request, response) {
             // Ultima vez del ping del usuario
             var dateString = estados[i].time, dateTimeParts = dateString.split(' - '), timeParts = dateTimeParts[1].split(':'), dateParts = dateTimeParts[0].split('/'), date;
             var time = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1]).getTime() / 1000;
+
+            // La inactividad depende del tiempo en el que tenga que enviar el siguiente ping
+            // Se añaden 60 segundos extras por si la conexión a Internet le va lenta
+            var max_time_to_ping = estados[i].time_next_ping + 60;
 
             // Si lleva max_time_to_ping sin realizar un ping, comprobamos
             if((time_now - time) > max_time_to_ping){
