@@ -117,7 +117,7 @@ function getHaversineDistance(lat1, lon1, lat2, lon2) {
 // según la distancia que haya entre víctima y agresor.
 function getTimeToNextPing(distance) {
 
-  if(distance <= 5){
+  if(distance >= 0 && distance <= 5){
     return 10;
   } else if(distance > 5 && distance <= 10){
     return 120;
