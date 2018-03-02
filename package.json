@@ -19,6 +19,7 @@
     "mongoose": "^4.6.1",
     "morgan": "*",
     "node-gcm": "*",
+    "nodemailer": "^4.6.0",
     "passport": "*",
     "passport-local": "*",
     "request": "*",

@@ -15,6 +15,7 @@ module.exports = function (app) {
     app.get('/status', camaras.estadoindex); // vista para añadir camara
     app.get('/incidencias', camaras.incidenciasindex); // Incidencias
     app.get('/mapa', camaras.mapaindex); // Mapa
+    app.get('/contacto', camaras.contactindex); // Contacto
 
     // API
     app.post('/camara', camaras.new); // crear nueva camara --> registro

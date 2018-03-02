@@ -175,6 +175,9 @@ exports.mapaindex = function (req, res) {
     res.render('mapa');
 };
 
+exports.contactindex = function (req, res) {
+    res.render('contacto');
+};
 
 /************************************************************************************/
 /*******    API Responces                                                  **********/

@@ -618,10 +618,56 @@ streamingApp.controller('MapaCtrl', function ($scope, $http, $window, $location,
       document.getElementById(id).className = 'collection-item active';
     };
 
+    $scope.livecounter = 0;
+    var updateLivecounter = function(){
+        $http({
+            method: 'GET',
+            url: '/livecameras',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.livecounter = response.length;
+            console.log(response);
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            $scope.livecounter = 0;
+            console.log($scope.livecounter);
+        });
+    }
+
     /* To refresh data */
     var timer = setInterval(function () {
         $scope.$apply(updateMenu);
         $scope.$apply(updateMarkers);
+    }, 1000);
+
+});
+
+streamingApp.controller('ContactCtrl', function ($scope, $http, $location) {
+
+    $scope.livecounter = 0;
+    var updateLivecounter = function(){
+        $http({
+            method: 'GET',
+            url: '/livecameras',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.livecounter = response.length;
+            console.log(response);
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            $scope.livecounter = 0;
+            console.log($scope.livecounter);
+        });
+    }
+
+    /* To refresh data */
+    var timer = setInterval(function () {
+        $scope.$apply(updateData);
+        $scope.$apply(updateLivecounter);
     }, 1000);
 
 });
