@@ -9,27 +9,31 @@
   </div>
 
   <div class="row">
-    <form class="col s12">
+    <form action="/contactemail" id="contact-form" class="col s12" method="post" role="form">
       <div class="row">
         <div class="input-field col s4">
-          <input id="first_name" type="text" class="validate">
-          <label for="first_name">Nombre</label>
+          <input id="name" name="name" type="text" class="validate" required>
+          <label for="name">Nombre</label>
         </div>
         <div class="input-field col s8">
-          <input id="last_name" type="text" class="validate">
-          <label for="last_name">Apellidos</label>
+          <input id="surname" name="surname" type="text" class="validate" required>
+          <label for="surname">Apellidos</label>
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s12">
-          <input id="email" type="email" class="validate">
+        <div class="input-field col s6">
+          <input id="email" name="email" type="email" class="validate" required>
           <label for="email" data-error="Inválido" data-success="Válido">Email</label>
         </div>
+        <div class="input-field col s6">
+          <input id="subject" name="subject" type="text" class="validate" required>
+          <label for="subject">Asunto</label>
+        </div>
       </div>
       <div class="row">
         <div class="input-field col s12">
-          <textarea id="textarea1" class="materialize-textarea"></textarea>
-          <label for="textarea1">Indique su comentario</label>
+          <textarea id="textemail" name="textemail" class="materialize-textarea" required></textarea>
+          <label for="textemail">Indique su comentario</label>
         </div>
       </div>
       <div class="row center-align">

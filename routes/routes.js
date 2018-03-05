@@ -16,6 +16,8 @@ module.exports = function (app) {
     app.get('/incidencias', camaras.incidenciasindex); // Incidencias
     app.get('/mapa', camaras.mapaindex); // Mapa
     app.get('/contacto', camaras.contactindex); // Contacto
+    app.get('/emailenviado', camaras.emailsent); // Email enviado satisfactoriamente
+    app.get('/emailerror', camaras.emailerror); // Fallo al enviar el email
 
     // API
     app.post('/camara', camaras.new); // crear nueva camara --> registro
@@ -43,4 +45,6 @@ module.exports = function (app) {
     app.get('/updatemarkers/:id', camaras.updatemarkers); // poner una cámara onLive
 
     app.put('/updateaggressorposition/:victim_mac', camaras.updateAggressorPosition); // Actualiza la posición GPS del agresor
+
+    app.post('/contactemail', camaras.contactEmail); // Envía un correo cuando se pulsa el botón de "Enviar"
 }

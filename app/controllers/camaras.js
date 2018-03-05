@@ -10,6 +10,7 @@ var Indidencias = require('../../app/models/incidencia');
 var Utilities = require('./utilities');
 var crypto = require('crypto');
 var ecdh = require('ecdh');
+var nodemailer = require('nodemailer');
 
 var error = {'response' : 404};
 var error_400 = {'response' : 400};
@@ -177,6 +178,14 @@ exports.mapaindex = function (req, res) {
 
 exports.contactindex = function (req, res) {
     res.render('contacto');
+};
+
+exports.emailsent = function (req, res) {
+    res.render('emailenviado');
+};
+
+exports.emailerror = function (req, res) {
+    res.render('emailerrorview');
 };
 
 /************************************************************************************/
@@ -572,4 +581,40 @@ exports.updateAggressorPosition = function (request, response) {
         response.send({"distancia": d});
       }
     })
+};
+
+/* Send an email from contact form */
+exports.contactEmail = function (request, response) {
+
+    var CONTACT_EMAIL = "";
+    var CONTACT_PASSWORD = "";
+
+    var mailOpts, smtpTrans;
+    
+    // Email parameters
+    smtpTrans = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: { user: CONTACT_EMAIL, pass: CONTACT_PASSWORD }
+    });
+
+    // Email content
+    mailOpts = {
+        from: request.body.name + '(' + request.body.email + ')',
+        to: CONTACT_EMAIL,
+        subject: request.body.subject,
+        text: 'De: ' + request.body.name + ' ' + request.body.surname + ' (' + request.body.email + ')\n\n' + request.body.textemail
+    };
+
+    // Send email and response
+    smtpTrans.sendMail(mailOpts, function (error, res) {
+        if (error) {
+            console.log(error);
+            response.render('emailerrorview');
+        } else {
+            console.log("Email sent");
+            response.render('emailenviado');
+        }
+    });
 };
