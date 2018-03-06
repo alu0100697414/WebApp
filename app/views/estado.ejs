@@ -22,6 +22,7 @@
                     <th data-field="Distancia">Distancia del agresor</th>
                     <th data-field="Bateria">Nivel de batería</th>
                     <th data-field="Bateria">Fecha</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,6 +35,11 @@
                     <td ng-if="estado.latitude == 'null' || estado.distance == -1">-</td>
                     <td>{{estado.battery}}</td>
                     <td>{{estado.time}}</td>
+                    <td>
+                        <a ng-click="delete(estado._id)" class="btn btn-floating waves-effect waves-light red hoverable">
+                          <i  class="material-icons">delete</i>
+                        </a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

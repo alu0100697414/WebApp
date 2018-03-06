@@ -287,6 +287,25 @@ streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
         });
     };
 
+    $scope.delete = function (id) {
+        console.log($scope.delete);
+        $http({
+            method: 'DELETE',
+            url: '/deletestatusdevice/' + id,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.estados = response;
+            console.log(response);
+            updateData();
+
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            console.log($scope.codeStatus);
+        });
+    };
+
     updateData();
 
     $scope.estados = [];

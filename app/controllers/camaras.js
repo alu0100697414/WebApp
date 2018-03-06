@@ -469,6 +469,18 @@ exports.updateStateDevice = function (request, response) {
 };
 
 /* add new incidence */
+exports.deleteStatusDevice = function (request, response) {
+
+    if ( Utilities.isEmpty(request.params.id)) return response.send(error_400);
+    StatusDevice.findOne({_id: request.params.id}, function (err, statusdevice) {
+        if (err) return response.send(error);
+        if (Utilities.isEmpty(statusdevice)) return response.send(error);
+        statusdevice.remove();
+        response.send(ok);
+    });
+};
+
+/* add new incidence */
 exports.addNewIncidence = function (request, response) {
 
     if (Utilities.isEmpty(request.params.mac)) return response.send(error_400);
