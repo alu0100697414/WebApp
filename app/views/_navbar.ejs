@@ -1,8 +1,15 @@
 <header><nav>
     <div class="nav-wrapper indigo">
         <ul class="left">
-            <li> <a href="/"> <img id="logo" src="img/logo.png" width="50px" style="margin-top:15%;margin-bottom:14%;"> </a> </li>
-            <li> <a href="/"> ProtectULL</a> </li>
+            <li> 
+                <div>                      
+                    <a href="/">
+                        <img src="img/logo.png" width="50px" style="border: 0; float: left; margin-right: 20px; margin-top:6%;margin-bottom:6%;" /> 
+                        <span>Inicio</span>
+                    </a>  
+                </div>
+            </li>
+            <!-- <li> <a href="/">Inicio</a> </li> -->
             <% if(session.user){ %>
                 <li> <a href="/listcamaras" >Dispositivos</a> </li>
             <% } %>
