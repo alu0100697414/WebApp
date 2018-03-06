@@ -3,21 +3,27 @@ module.exports = function (app) {
 
     var utilities = require('../app/controllers/utilities');
     var camaras = require('../app/controllers/camaras');
+    var sessionController = require('../app/controllers/session');
     var passport = require('passport');
+
+    // Definición de rutas de sesión
+    app.get('/login', sessionController.new); // Formulario de login
+    app.post('/login', sessionController.create); // Crear sesión
+    app.get('/logout', sessionController.destroy); // Destruir sesión
 
     /* Home Page */
     app.get('/', utilities.index);
 
     // Camaras (vistas)
-    app.get('/live', camaras.index); // index de todas las cámaras en directo
-    app.get('/listcamaras', camaras.listindex); // vista para añadir camara
-    app.get('/historial', camaras.historialindex); // Historial de conexiones
-    app.get('/status', camaras.estadoindex); // vista para añadir camara
-    app.get('/incidencias', camaras.incidenciasindex); // Incidencias
-    app.get('/mapa', camaras.mapaindex); // Mapa
-    app.get('/contacto', camaras.contactindex); // Contacto
-    app.get('/emailenviado', camaras.emailsent); // Email enviado satisfactoriamente
-    app.get('/emailerror', camaras.emailerror); // Fallo al enviar el email
+    app.get('/live', sessionController.loginRequired, camaras.index); // index de todas las cámaras en directo
+    app.get('/listcamaras', sessionController.loginRequired, camaras.listindex); // vista para añadir camara
+    app.get('/historial', sessionController.loginRequired, camaras.historialindex); // Historial de conexiones
+    app.get('/status', sessionController.loginRequired, camaras.estadoindex); // vista para añadir camara
+    app.get('/incidencias', sessionController.loginRequired, camaras.incidenciasindex); // Incidencias
+    app.get('/mapa', sessionController.loginRequired, camaras.mapaindex); // Mapa
+    app.get('/contacto', sessionController.loginRequired, camaras.contactindex); // Contacto
+    app.get('/emailenviado', sessionController.loginRequired, camaras.emailsent); // Email enviado satisfactoriamente
+    app.get('/emailerror', sessionController.loginRequired, camaras.emailerror); // Fallo al enviar el email
 
     // API
     app.post('/camara', camaras.new); // crear nueva camara --> registro
