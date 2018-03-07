@@ -548,7 +548,7 @@ exports.updateIncidences = function (request, response) {
 
 /* All cams */
 exports.getallstatusdevice = function (request, response) {
-    StatusDevice.find({}, {}, { sort: {'distance' : -1} }, function (err, camaras) {
+    StatusDevice.find({distance: { $lt: 1 }}, {}, { sort: {'distance' : -1} }, function (err, camaras) {
         if (!err) {
             response.send(camaras);
         } else {
@@ -560,7 +560,7 @@ exports.getallstatusdevice = function (request, response) {
 
 /* update markers del mapa actual */
 exports.updatemarkers = function (request, response) {
-    StatusDevice.findOne({_id: request.params.id}, function (err, camara) {
+    StatusDevice.findOne({_id: request.params.id, distance: { $lt: 1 }}, function (err, camara) {
         if (err) return response.send(error);
         if (Utilities.isEmpty(camara)) return response.send(error);
         response.send(camara);
