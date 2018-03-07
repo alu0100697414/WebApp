@@ -394,7 +394,7 @@ exports.updateStateDevice = function (request, response) {
 
         // If it is empty, a new device will be saved on db
         if (Utilities.isEmpty(device)){
-          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time_next_ping: 10, time: getFormattedDate(), battery: DBattery + "%" });
+          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time_next_ping: 10, time: getFormattedDate(), panic_button_time: 0, battery: DBattery + "%" });
           new_state.save();
 
           response.send(ok);
@@ -464,6 +464,36 @@ exports.updateStateDevice = function (request, response) {
           }
 
           response.send({"distancia": d, "nextPing": time_to_next_ping});
+        }
+    });
+};
+
+/* update the time when a panic button is pushed in a device */
+exports.updatePanicButton = function (request, response) {
+
+    if (Utilities.isEmpty(request.params.mac)) return response.send(error_400);
+
+    StatusDevice.find({mac: request.params.mac}).exec(function (err, device) {
+
+        if (err) return response.send(error);
+
+        // Si no existe el dispositivo, no se puede guardar el timestamp
+        if (Utilities.isEmpty(device)){
+
+            response.send(error);
+        } 
+        
+        else {
+
+            // Actualizamos el timestamp
+            device[0].panic_button_time = Math.floor(Date.now()/1000);
+            device[0].save();
+
+            // Se genera una incidencia
+            var new_inc = new Indidencias({ mac: request.params.mac, name: device[0].name, number: device[0].number, type_incidence: 6, text_incidence: "La víctima ha pulsado el botón de pánico.", time: getFormattedDate() });
+            new_inc.save();
+
+            response.send(ok);
         }
     });
 };
@@ -548,6 +578,11 @@ exports.updateIncidences = function (request, response) {
 
 /* All cams */
 exports.getallstatusdevice = function (request, response) {
+
+    var min_timestamp = Math.floor(Date.now()/1000) - 1800;
+
+    // , panic_button_time: { $gt: min_timestamp }
+
     StatusDevice.find({distance: { $lt: 1 }}, {}, { sort: {'distance' : -1} }, function (err, camaras) {
         if (!err) {
             response.send(camaras);
@@ -560,6 +595,9 @@ exports.getallstatusdevice = function (request, response) {
 
 /* update markers del mapa actual */
 exports.updatemarkers = function (request, response) {
+
+    var min_timestamp = Math.floor(Date.now()/1000) - 1800;
+
     StatusDevice.findOne({_id: request.params.id, distance: { $lt: 1 }}, function (err, camara) {
         if (err) return response.send(error);
         if (Utilities.isEmpty(camara)) return response.send(error);

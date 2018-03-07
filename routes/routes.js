@@ -41,6 +41,7 @@ module.exports = function (app) {
 
     app.get('/getEstado',  camaras.getEstado); // Obtiene el estado de los dispositivos de los usuarios
     app.put('/statusdevice/:mac', camaras.updateStateDevice); // actualizar el estado de los dispositivos
+    app.put('/panicbutton/:mac', camaras.updatePanicButton); // actualiza la última vez que se pulsó el botón de pánico
     app.delete('/deletestatusdevice/:id', camaras.deleteStatusDevice); // Borra info del estado para una víctima
 
     app.get('/getIncidencias',  camaras.getIncidencias); // Obtiene todas las incidencias
