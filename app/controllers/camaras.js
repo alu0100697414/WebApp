@@ -223,9 +223,12 @@ exports.deleteHistorial = function (request, response) {
 
 /* Get estado */
 exports.getEstado = function (request, response) {
+
+    var min_timestamp = Math.floor(Date.now()/1000) - 1800;
+
     StatusDevice.find({}, null, {sort: {distance: -1}},function (err, estados) {
         if (!err) {
-            response.send(estados);
+            response.send([estados, min_timestamp]);
         } else {
             console.log(err);
             response.send(error);
@@ -581,9 +584,7 @@ exports.getallstatusdevice = function (request, response) {
 
     var min_timestamp = Math.floor(Date.now()/1000) - 1800;
 
-    // , panic_button_time: { $gt: min_timestamp }
-
-    StatusDevice.find({distance: { $lt: 1 }}, {}, { sort: {'distance' : -1} }, function (err, camaras) {
+    StatusDevice.find({$or: [{ distance: { $lt: 1 }}, { panic_button_time: { $gt: min_timestamp } }] }, {}, { sort: {'distance' : -1} }, function (err, camaras) {
         if (!err) {
             response.send(camaras);
         } else {
@@ -598,7 +599,7 @@ exports.updatemarkers = function (request, response) {
 
     var min_timestamp = Math.floor(Date.now()/1000) - 1800;
 
-    StatusDevice.findOne({_id: request.params.id, distance: { $lt: 1 }}, function (err, camara) {
+    StatusDevice.findOne({_id: request.params.id, $or: [{ distance: { $lt: 1 }}, { panic_button_time: { $gt: min_timestamp } }]}, function (err, camara) {
         if (err) return response.send(error);
         if (Utilities.isEmpty(camara)) return response.send(error);
         response.send(camara);
