@@ -11,11 +11,21 @@ var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
 var passport = require('passport');
 var nodemailer = require('nodemailer');
-
+var fs = require('fs');
+var https = require('https');
 
 var app = express();
 
 app.enable('view cache');
+
+// Credencials
+const privateKey  = fs.readFileSync('certs/key.pem', 'utf8');
+const certificate = fs.readFileSync('certs/cert.pem', 'utf8');
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  passphrase: '1234'
+};
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -59,8 +69,31 @@ routes = require('./routes/routes')(app);
 //Connect to the MongoDB test database
 mongoose.connect('mongodb://localhost/atlas_db');
 
-server.listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
+/**
+ * Launching
+ */
+var httpServer = http.createServer((req, res) => {
+  var host = req.headers['host'].split(":");
+  var name = host[0];
+  var port = 80;
+  if (host.length > 1) {
+    port = host[1];
+  }
+  res.writeHead(301, { "Location": "https://" + name + ":8000" + req.url });
+  res.end();
+});
+
+var httpsServer = https.createServer(credentials, app);
+
+// If you are in Linux-based OS, you must execute as root or you must change the ports under 1024
+// For example: 80 -> 8080 and 443 -> 8443
+httpServer.listen(8881, () => {
+  console.log('Application is running in non-safe mode over the port 8881');
+  console.log('All traffic will be redirect to https server');
+});
+
+httpsServer.listen(8000, () => {
+  console.log('Application is running in safe mode over the port 8000');
 });
 
 
