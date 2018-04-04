@@ -72,25 +72,25 @@ mongoose.connect('mongodb://localhost/atlas_db');
 /**
  * Launching
  */
-var httpServer = http.createServer((req, res) => {
-  var host = req.headers['host'].split(":");
-  var name = host[0];
-  var port = 80;
-  if (host.length > 1) {
-    port = host[1];
-  }
-  res.writeHead(301, { "Location": "https://" + name + ":8000" + req.url });
-  res.end();
-});
+// var httpServer = http.createServer((req, res) => {
+//   var host = req.headers['host'].split(":");
+//   var name = host[0];
+//   var port = 80;
+//   if (host.length > 1) {
+//     port = host[1];
+//   }
+//   res.writeHead(301, { "Location": "https://" + name + ":8000" + req.url });
+//   res.end();
+// });
 
 var httpsServer = https.createServer(credentials, app);
 
 // If you are in Linux-based OS, you must execute as root or you must change the ports under 1024
 // For example: 80 -> 8080 and 443 -> 8443
-httpServer.listen(8881, () => {
-  console.log('Application is running in non-safe mode over the port 8881');
-  console.log('All traffic will be redirect to https server');
-});
+// httpServer.listen(8881, () => {
+//   console.log('Application is running in non-safe mode over the port 8881');
+//   console.log('All traffic will be redirect to https server');
+// });
 
 httpsServer.listen(8000, () => {
   console.log('Application is running in safe mode over the port 8000');
