@@ -168,6 +168,10 @@ exports.estadoindex = function (req, res) {
     res.render('estado');
 };
 
+exports.estadoagresoresindex = function (req, res) {
+    res.render('estadoagresores');
+};
+
 exports.incidenciasindex = function (req, res) {
     res.render('incidencias');
 };
@@ -397,7 +401,7 @@ exports.updateStateDevice = function (request, response) {
 
         // If it is empty, a new device will be saved on db
         if (Utilities.isEmpty(device)){
-          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time_next_ping: 10, time: getFormattedDate(), panic_button_time: 0, battery: DBattery + "%" });
+          var new_state = new StatusDevice({ mac: request.params.mac, name: DName, number: DNumber, latitude: DLatitude, longitude: DLongitude, distance: 0, time_next_ping: 10, timestamp_next_ping: Math.floor(Date.now()/1000) + 10, time: getFormattedDate(), panic_button_time: 0, battery: DBattery + "%" });
           new_state.save();
 
           response.send(ok);
@@ -421,6 +425,7 @@ exports.updateStateDevice = function (request, response) {
           device[0].distance = d;
           device[0].time = getFormattedDate();
           device[0].time_next_ping = time_to_next_ping;
+          device[0].timestamp_next_ping = Math.floor(Date.now()/1000) + time_to_next_ping;
           device[0].battery = DBattery + "%";
           device[0].save();
 

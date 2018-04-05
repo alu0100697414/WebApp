@@ -18,7 +18,8 @@ module.exports = function (app) {
     app.get('/live', sessionController.loginRequired, camaras.index); // index de todas las cámaras en directo
     app.get('/listcamaras', sessionController.loginRequired, camaras.listindex); // vista para añadir camara
     app.get('/historial', sessionController.loginRequired, camaras.historialindex); // Historial de conexiones
-    app.get('/status', sessionController.loginRequired, camaras.estadoindex); // vista para añadir camara
+    app.get('/status', sessionController.loginRequired, camaras.estadoindex); // Estado de las víctimas
+    app.get('/aggressorstatus', sessionController.loginRequired, camaras.estadoagresoresindex); // Estado de los agresores
     app.get('/incidencias', sessionController.loginRequired, camaras.incidenciasindex); // Incidencias
     app.get('/mapa', sessionController.loginRequired, camaras.mapaindex); // Mapa
     app.get('/contacto', camaras.contactindex); // Contacto

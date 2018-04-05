@@ -5,8 +5,8 @@
 <main><div class="container">
     <div class="row">
         <br><br>
-        <h2 class="center indigo-text"> Estado de las víctimas </h2>
-        <h6 class="center indigo-text"> (Estado actual en el que se encuentran las víctimas por medio de sus dispositivos) </h6>
+        <h2 class="center indigo-text"> Estado de los agresores </h2>
+        <h6 class="center indigo-text"> (Estado actual en el que se encuentran los agresores por medio de sus dispositivos) </h6>
     </div>
 
     <br>
@@ -16,13 +16,12 @@
             <table class="responsive-table bordered">
                 <thead>
                 <tr>
-                    <th data-field="nombre">Nombre</th>
-                    <th data-field="numero">Número</th>
-                    <th data-field="Lugar">Ubicación actual</th>
+                    <th data-field="Lugar">MAC</th>
+                    <th data-field="Lugar">Ubicación</th>
                     <th data-field="Distancia">Distancia</th>
                     <th data-field="Bateria">Nivel de batería</th>
-                    <th data-field="fecha">Fecha</th>
-                    <th data-field="next_ping">Siguiente ping en</th>
+                    <th data-field="Bateria">Última actualización</th>
+                    <th data-field="Bateria">Siguiente ping en</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -37,10 +36,6 @@
                     <td ng-if="estado.latitude == 'null' || estado.distance == -1">-</td>
                     <td>{{estado.battery}}</td>
                     <td>{{estado.time}}</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) >= 3600">Menos de {{getHours(estado.timestamp_next_ping - date)}}h</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) > 60 && (estado.timestamp_next_ping - date) < 3600">Menos de {{getMinutes(estado.timestamp_next_ping - date)}}min</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) > 0 && (estado.timestamp_next_ping - date) <= 60">{{estado.timestamp_next_ping - date}}s</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) <= 0" style="color:red;">Esperando...</td>
                     <td>
                         <a ng-click="delete(estado._id)" class="btn btn-floating waves-effect waves-light red hoverable">
                           <i  class="material-icons">delete</i>
