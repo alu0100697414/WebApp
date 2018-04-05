@@ -554,12 +554,8 @@ exports.updateIncidences = function (request, response) {
             var dateString = estados[i].time, dateTimeParts = dateString.split(' - '), timeParts = dateTimeParts[1].split(':'), dateParts = dateTimeParts[0].split('/'), date;
             var time = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1]).getTime() / 1000;
 
-            // La inactividad depende del tiempo en el que tenga que enviar el siguiente ping
-            // Se añaden 60 segundos extras por si la conexión a Internet le va lenta
-            var max_time_to_ping = estados[i].time_next_ping + 60;
-
-            // Si lleva max_time_to_ping sin realizar un ping, comprobamos
-            if((time_now - time) > max_time_to_ping){
+            // Si lleva más del tiempo determinado para el ping mas 5 segundos extra, se genera incidencia
+            if(((estados[i].timestamp_next_ping + 5) - (Math.floor(Date.now()/1000))) < 0){
               // Creamos o actualizamos la incidencia correspondiente
               Indidencias.update (
                 { mac: estados[i].mac, type_incidence: 2 },
