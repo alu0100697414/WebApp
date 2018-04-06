@@ -1,5 +1,5 @@
 <% include _head.ejs %>
-<body ng-controller="EstadoCtrl">
+<body ng-controller="EstadoAgresoresCtrl">
 <% include _navbar.ejs %>
 
 <main><div class="container">
@@ -16,26 +16,28 @@
             <table class="responsive-table bordered">
                 <thead>
                 <tr>
-                    <th data-field="Lugar">MAC</th>
-                    <th data-field="Lugar">Ubicación</th>
-                    <th data-field="Distancia">Distancia</th>
-                    <th data-field="Bateria">Nivel de batería</th>
+                    <th data-field="Lugar">MAC Víctima</th>
+                    <th data-field="Lugar">Nombre</th>
+                    <th data-field="Distancia">Número</th>
+                    <th data-field="Distancia">Ubicación</th>
+                    <th data-field="Bateria">Batería</th>
                     <th data-field="Bateria">Última actualización</th>
-                    <th data-field="Bateria">Siguiente ping en</th>
+                    <th data-field="next_ping">Siguiente ping en</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="estado in estados.0">
-                    <td>{{estado.name}}</td>
-                    <td>{{estado.number}}</td>
-                    <td ng-if="estado.latitude != 'null' && (estado.distance < 1 || estado.panic_button_time > estados.1)"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{estado.latitude}}+{{estado.longitude}}" target="_blank">Enlace</a></td>
-                    <td ng-if="estado.latitude != 'null' && (estado.distance >= 1 && estado.panic_button_time <= estados.1)">-</td>
-                    <td ng-if="estado.latitude == 'null'">GPS desactivado</td>
-                    <td ng-if="estado.latitude != 'null' && estado.distance != -1">{{estado.distance}} Km</td>
-                    <td ng-if="estado.latitude == 'null' || estado.distance == -1">-</td>
-                    <td>{{estado.battery}}</td>
-                    <td>{{estado.time}}</td>
+                    <td>{{estado.mac}}</td>
+                    <td>{{estado.name_aggressor}}</td>
+                    <td>{{estado.number_aggressor}}</td>
+                    <td ng-if="estado.latitude_aggressor != 'null' && (estado.distance < 1 || estado.panic_button_time > estados.1)"><a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{estado.latitude_aggressor}}+{{estado.longitude_aggressor}}" target="_blank">Enlace</a></td>
+                    <td ng-if="estado.latitude_aggressor != 'null' && (estado.distance >= 1 && estado.panic_button_time <= estados.1)">-</td>
+                    <td ng-if="estado.latitude_aggressor == 'null'">GPS desactivado</td>
+                    <td>{{estado.battery_aggressor}}</td>
+                    <td>{{estado.time_aggressor}}</td>
+                    <td ng-if="(estado.timestamp_next_ping_aggressor - date) > 0">{{estado.timestamp_next_ping_aggressor - date}}s</td>
+                    <td ng-if="(estado.timestamp_next_ping_aggressor - date) <= 0" style="color:red;">Esperando...</td>
                     <td>
                         <a ng-click="delete(estado._id)" class="btn btn-floating waves-effect waves-light red hoverable">
                           <i  class="material-icons">delete</i>

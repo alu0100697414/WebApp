@@ -614,7 +614,11 @@ exports.updateAggressorPosition = function (request, response) {
 
     if (Utilities.isEmpty(request.body.latitude_aggressor)) return response.send(error_400);
     if (Utilities.isEmpty(request.body.longitude_aggressor)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.aggressor_name)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.aggressor_number)) return response.send(error_400);
+    if (Utilities.isEmpty(request.body.aggressor_battery)) return response.send(error_400);
 
+    console.log(request.body.aggressor_name);
     console.log(request.body.latitude_aggressor);
     console.log(request.body.longitude_aggressor);
 
@@ -628,8 +632,12 @@ exports.updateAggressorPosition = function (request, response) {
 
         device[0].latitude_aggressor = request.body.latitude_aggressor;
         device[0].longitude_aggressor = request.body.longitude_aggressor;
+        device[0].name_aggressor = request.body.aggressor_name;
+        device[0].number_aggressor = request.body.aggressor_number;
+        device[0].battery_aggressor = request.body.aggressor_battery + "%";
+        device[0].time_aggressor = getFormattedDate();
+        device[0].timestamp_next_ping_aggressor = Math.floor(Date.now()/1000) + 15;
         device[0].save();
-
         response.send({"distancia": d});
       }
     })

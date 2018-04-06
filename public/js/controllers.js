@@ -356,6 +356,92 @@ streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
 
 });
 
+streamingApp.controller('EstadoAgresoresCtrl', function ($scope, $http, $location) {
+
+    $scope.date = Math.floor(Date.now()/1000);
+
+    var updateData = function () {
+        $http({
+            method: 'GET',
+            url: '/getEstado',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.estados = response;
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            console.log($scope.codeStatus);
+        });
+
+        $scope.date = Math.floor(Date.now()/1000);
+    };
+
+    $scope.delete = function (id) {
+        console.log($scope.delete);
+        $http({
+            method: 'DELETE',
+            url: '/deletestatusdevice/' + id,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.estados = response;
+            console.log(response);
+            updateData();
+
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            console.log($scope.codeStatus);
+        });
+    };
+
+    updateData();
+
+    $scope.estados = [];
+
+    $scope.isActive = function (route) {
+        var path = $location.absUrl().split("/");
+        console.log(route === path[path.length - 1]);
+        //console.log($location.absUrl());
+        //console.log(route === $location.path().toString);
+        return route === path[path.length - 1];
+    }
+
+    $scope.getMinutes = function (value) {
+        return Math.ceil(value/60);
+    }
+
+    $scope.getHours = function (value) {
+        return Math.ceil(value/3600);
+    }
+
+    $scope.livecounter = 0;
+    var updateLivecounter = function(){
+        $http({
+            method: 'GET',
+            url: '/livecameras',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (response) {
+            $scope.codeStatus = response;
+            $scope.livecounter = response.length;
+            console.log(response);
+        }).error(function (response) {  // Getting Error Response in Callback
+            console.log("error");
+            $scope.codeStatus = response || "Request failed";
+            $scope.livecounter = 0;
+            console.log($scope.livecounter);
+        });
+    }
+
+    /* To refresh data */
+    var timer = setInterval(function () {
+        $scope.$apply(updateData);
+        $scope.$apply(updateLivecounter);
+    }, 1000);
+
+});
+
 streamingApp.controller('IncidenciasCtrl', function ($scope, $http, $location) {
 
     var updateIncidences = function () {
