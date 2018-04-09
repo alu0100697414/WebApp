@@ -375,6 +375,7 @@ streamingApp.controller('EstadoAgresoresCtrl', function ($scope, $http, $locatio
         });
 
         $scope.date = Math.floor(Date.now()/1000);
+        console.log($scope.date);
     };
 
     $scope.delete = function (id) {
