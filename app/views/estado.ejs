@@ -37,10 +37,8 @@
                     <td ng-if="estado.latitude == 'null' || estado.distance == -1">-</td>
                     <td>{{estado.battery}}</td>
                     <td>{{estado.time}}</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) >= 3600">Menos de {{getHours(estado.timestamp_next_ping - date)}}h</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) > 60 && (estado.timestamp_next_ping - date) < 3600">Menos de {{getMinutes(estado.timestamp_next_ping - date)}}min</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) > 0 && (estado.timestamp_next_ping - date) <= 60">{{estado.timestamp_next_ping - date}}s</td>
-                    <td ng-if="(estado.timestamp_next_ping - date) <= 0" style="color:red;">Esperando...</td>
+                    <td ng-if="estado.updated_date != 'Esperando...'">{{estado.updated_date}}</td>
+                    <td ng-if="estado.updated_date == 'Esperando...'" style="color:red;">{{estado.updated_date}}</td>
                     <td>
                         <a ng-click="delete(estado._id)" class="btn btn-floating waves-effect waves-light red hoverable">
                           <i  class="material-icons">delete</i>

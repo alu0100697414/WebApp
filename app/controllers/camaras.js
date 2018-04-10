@@ -137,14 +137,16 @@ function getTimeToNextPing(distance) {
   } else {
     return 10;
   }
+}
 
-  // if(distance <= 0.003){
-  //   return 3;
-  // } else if(distance > 0.003 && distance <= 0.010){
-  //   return 10;
-  // } else {
-  //   return 20;
-  // }
+// Devuelve los segundos en minutos
+function getMinutes(value) {
+    return Math.ceil(value/60);
+}
+
+// Devuelve los segundos en horas
+function getHours(value) {
+    return Math.ceil(value/3600);
 }
 
 /* Views Responce */
@@ -228,16 +230,63 @@ exports.deleteHistorial = function (request, response) {
 /* Get estado */
 exports.getEstado = function (request, response) {
 
+    // Para ver si muestra ubicación en función del botón de pánico
     var min_timestamp = Math.floor(Date.now()/1000) - 1800;
 
     StatusDevice.find({}, null, {sort: {distance: -1}},function (err, estados) {
         if (!err) {
+
+            // Calculamos el tiempo restante hasta el siguiente ping
+            var current_date = Math.floor(Date.now()/1000);
+            for(var i=0; i<estados.length; i++){
+                if((estados[i].timestamp_next_ping - current_date) >= 3600){
+                    estados[i].updated_date = "Menos de " + getHours(estados[i].timestamp_next_ping - current_date) + "h";
+                } else if((estados[i].timestamp_next_ping - current_date) > 60 && (estados[i].timestamp_next_ping - current_date) < 3600){
+                    estados[i].updated_date = "Menos de " + getMinutes(estados[i].timestamp_next_ping - current_date) + "min";
+                } else if((estados[i].timestamp_next_ping - current_date) > 0 && (estados[i].timestamp_next_ping - current_date) <= 60){
+                    estados[i].updated_date = estados[i].timestamp_next_ping - current_date + "s";
+                } else {
+                    estados[i].updated_date = "Esperando...";
+                }
+            }
+            
             response.send([estados, min_timestamp]);
         } else {
             console.log(err);
             response.send(error);
         }
-    });
+    }).lean();
+};
+
+/* Get estado agresores */
+exports.getEstadoAgresores = function (request, response) {
+
+    // Para ver si muestra ubicación en función del botón de pánico
+    var min_timestamp = Math.floor(Date.now()/1000) - 1800;
+
+    StatusDevice.find({}, null, {sort: {distance: -1}},function (err, estados) {
+        if (!err) {
+
+            // Calculamos el tiempo restante hasta el siguiente ping
+            var current_date = Math.floor(Date.now()/1000);
+            for(var i=0; i<estados.length; i++){
+                if((estados[i].timestamp_next_ping_aggressor - current_date) >= 3600){
+                    estados[i].updated_date = "Menos de " + getHours(estados[i].timestamp_next_ping_aggressor - current_date) + "h";
+                } else if((estados[i].timestamp_next_ping_aggressor - current_date) > 60 && (estados[i].timestamp_next_ping_aggressor - current_date) < 3600){
+                    estados[i].updated_date = "Menos de " + getMinutes(estados[i].timestamp_next_ping_aggressor - current_date) + "min";
+                } else if((estados[i].timestamp_next_ping_aggressor - current_date) > 0 && (estados[i].timestamp_next_ping_aggressor - current_date) <= 60){
+                    estados[i].updated_date = estados[i].timestamp_next_ping_aggressor - current_date + "s";
+                } else {
+                    estados[i].updated_date = "Esperando...";
+                }
+            }
+            
+            response.send([estados, min_timestamp]);
+        } else {
+            console.log(err);
+            response.send(error);
+        }
+    }).lean();
 };
 
 /* Get incidencias */

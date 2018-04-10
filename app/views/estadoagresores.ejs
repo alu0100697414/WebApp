@@ -36,8 +36,8 @@
                     <td ng-if="estado.latitude_aggressor == 'null'">GPS desactivado</td>
                     <td>{{estado.battery_aggressor}}</td>
                     <td>{{estado.time_aggressor}}</td>
-                    <td ng-if="(estado.timestamp_next_ping_aggressor - date) > 0">{{estado.timestamp_next_ping_aggressor - date}}s</td>
-                    <td ng-if="(estado.timestamp_next_ping_aggressor - date) <= 0" style="color:red;">Esperando...</td>
+                    <td ng-if="estado.updated_date != 'Esperando...'">{{estado.updated_date}}</td>
+                    <td ng-if="estado.updated_date == 'Esperando...'" style="color:red;">{{estado.updated_date}}</td>
                     <td>
                         <a ng-click="delete(estado._id)" class="btn btn-floating waves-effect waves-light red hoverable">
                           <i  class="material-icons">delete</i>

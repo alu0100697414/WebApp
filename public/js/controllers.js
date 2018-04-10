@@ -272,8 +272,6 @@ streamingApp.controller('HistorialCtrl', function ($scope, $http, $location) {
 
 streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
 
-    $scope.date = Math.floor(Date.now()/1000);
-
     var updateData = function () {
         $http({
             method: 'GET',
@@ -287,8 +285,6 @@ streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
             $scope.codeStatus = response || "Request failed";
             console.log($scope.codeStatus);
         });
-
-        $scope.date = Math.floor(Date.now()/1000);
     };
 
     $scope.delete = function (id) {
@@ -320,14 +316,6 @@ streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
         //console.log($location.absUrl());
         //console.log(route === $location.path().toString);
         return route === path[path.length - 1];
-    }
-
-    $scope.getMinutes = function (value) {
-        return Math.ceil(value/60);
-    }
-
-    $scope.getHours = function (value) {
-        return Math.ceil(value/3600);
     }
 
     $scope.livecounter = 0;
@@ -358,12 +346,10 @@ streamingApp.controller('EstadoCtrl', function ($scope, $http, $location) {
 
 streamingApp.controller('EstadoAgresoresCtrl', function ($scope, $http, $location) {
 
-    $scope.date = Math.floor(Date.now()/1000);
-
     var updateData = function () {
         $http({
             method: 'GET',
-            url: '/getEstado',
+            url: '/getEstadoAgresores',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (response) {
             $scope.codeStatus = response;
@@ -373,9 +359,6 @@ streamingApp.controller('EstadoAgresoresCtrl', function ($scope, $http, $locatio
             $scope.codeStatus = response || "Request failed";
             console.log($scope.codeStatus);
         });
-
-        $scope.date = Math.floor(Date.now()/1000);
-        console.log($scope.date);
     };
 
     $scope.delete = function (id) {
@@ -407,14 +390,6 @@ streamingApp.controller('EstadoAgresoresCtrl', function ($scope, $http, $locatio
         //console.log($location.absUrl());
         //console.log(route === $location.path().toString);
         return route === path[path.length - 1];
-    }
-
-    $scope.getMinutes = function (value) {
-        return Math.ceil(value/60);
-    }
-
-    $scope.getHours = function (value) {
-        return Math.ceil(value/3600);
     }
 
     $scope.livecounter = 0;
