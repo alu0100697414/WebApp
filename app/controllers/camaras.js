@@ -270,12 +270,12 @@ exports.getEstadoAgresores = function (request, response) {
             // Calculamos el tiempo restante hasta el siguiente ping
             var current_date = Math.floor(Date.now()/1000);
             for(var i=0; i<estados.length; i++){
-                if((estados[i].timestamp_next_ping_aggressor - current_date) >= 3600){
-                    estados[i].updated_date = "Menos de " + getHours(estados[i].timestamp_next_ping_aggressor - current_date) + "h";
-                } else if((estados[i].timestamp_next_ping_aggressor - current_date) > 60 && (estados[i].timestamp_next_ping_aggressor - current_date) < 3600){
-                    estados[i].updated_date = "Menos de " + getMinutes(estados[i].timestamp_next_ping_aggressor - current_date) + "min";
-                } else if((estados[i].timestamp_next_ping_aggressor - current_date) > 0 && (estados[i].timestamp_next_ping_aggressor - current_date) <= 60){
-                    estados[i].updated_date = estados[i].timestamp_next_ping_aggressor - current_date + "s";
+                if((estados[i].timestamp_next_ping - current_date) >= 3600){
+                    estados[i].updated_date = "Menos de " + getHours(estados[i].timestamp_next_ping - current_date) + "h";
+                } else if((estados[i].timestamp_next_ping - current_date) > 60 && (estados[i].timestamp_next_ping - current_date) < 3600){
+                    estados[i].updated_date = "Menos de " + getMinutes(estados[i].timestamp_next_ping - current_date) + "min";
+                } else if((estados[i].timestamp_next_ping - current_date) > 0 && (estados[i].timestamp_next_ping - current_date) <= 60){
+                    estados[i].updated_date = estados[i].timestamp_next_ping - current_date + "s";
                 } else {
                     estados[i].updated_date = "Esperando...";
                 }
